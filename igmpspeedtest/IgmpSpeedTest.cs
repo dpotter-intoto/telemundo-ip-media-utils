@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,9 +8,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using PacketDotNet;
 using SharpPcap;
-using SharpPcap.WinPcap;
+using SharpPcap.Npcap;
 
-namespace IGMPSpeedTest
+namespace IgmpSpeedTest
 {
     /// <summary>
     /// IgmpSpeedTest - measures IGMP JOIN and LEAVE performance
@@ -195,7 +195,7 @@ namespace IGMPSpeedTest
             // Create and bind the local socket
             var multicastSocket = new Socket(AddressFamily.InterNetwork,
                 SocketType.Dgram,
-                ProtocolType.Udp);
+                System.Net.Sockets.ProtocolType.Udp);
             var localEndPoint = new IPEndPoint(_localIpAddress, UdpPort);
             multicastSocket.SendBufferSize = _streamCount; // make a tiny buffer for accurate output measurement
             multicastSocket.Bind(localEndPoint);
@@ -222,11 +222,12 @@ namespace IGMPSpeedTest
             }
 
             applicationWatch.Start();
+            byte[] payload={0x69};  // 0x69=i (for intoto)
             while (applicationWatch.ElapsedMilliseconds < _timeOutSeconds * 1000)
             {
                 foreach (var endpoint in multicastEndPoints)
                 {
-                    multicastSocket.SendTo(Encoding.ASCII.GetBytes("i"), endpoint); // i for intoto
+                    multicastSocket.SendTo(payload, endpoint);
                 }
                 if (_quietMode) continue;
                 //if (j++ % 1000 != 0) continue;
@@ -245,7 +246,7 @@ namespace IGMPSpeedTest
             var bytes = new byte[100];
             var multicastSocket = new Socket(AddressFamily.InterNetwork,
                                              SocketType.Dgram,
-                                             ProtocolType.Udp);
+                                             System.Net.Sockets.ProtocolType.Udp);
             var localEndPoint = new IPEndPoint(_localIpAddress, UdpPort);
             multicastSocket.ReceiveTimeout = 100;  // dont wait more than 100ms for a packet to arrive.
             multicastSocket.Bind(localEndPoint);
@@ -395,7 +396,7 @@ namespace IGMPSpeedTest
         private void ReceivePacket(object sender, CaptureEventArgs e)
         {
             var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
-            var ipPacket = (IpPacket) packet.Extract(typeof (IpPacket));
+            var ipPacket = packet.Extract<IPPacket>();            
             if (_leaveTimers.ContainsKey(ipPacket.DestinationAddress))
                 _leaveTimers[ipPacket.DestinationAddress].PacketSeen();
         }
@@ -404,9 +405,9 @@ namespace IGMPSpeedTest
         /// Finds all the NICs in the machine
         /// </summary>
         /// <returns></returns>
-        private static WinPcapDeviceList GetNics()
+        private static NpcapDeviceList GetNics()
         {
-            var allNics = WinPcapDeviceList.Instance;
+            var allNics = NpcapDeviceList.Instance;
             if (allNics.Count == 0)
                 throw (new NullReferenceException("Cannot find any local interfaces.  Make sure WinPcap is installed."));
             return allNics;
@@ -417,7 +418,7 @@ namespace IGMPSpeedTest
         /// </summary>
         /// <param name="nics"></param>
         /// <returns></returns>
-        private WinPcapDevice GetIncomingNic()
+        private NpcapDevice GetIncomingNic()
         {
             foreach (var nic in GetNics().Where(nic => nic.Interface.Addresses.Any(address => address.ToString().Contains(_localIp))))
                 return nic;
@@ -445,5 +446,3 @@ namespace IGMPSpeedTest
 
     }
 }
-
-

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using Mono.Options;
 using Newtonsoft.Json;
 
-namespace IGMPSpeedTest
+namespace IgmpSpeedTest
 {
     class Program
     {
@@ -177,8 +178,7 @@ namespace IGMPSpeedTest
             if (pauseBeforeLeave)
             {
                 Console.WriteLine("Press ENTER to issue LEAVE messages then quit...");
-                Console.ReadLine();
-
+                Console.ReadLine(); 
             }
         }
 
@@ -189,7 +189,7 @@ namespace IGMPSpeedTest
         static void ShowHelp(OptionSet cmdLineOptions)
         {
             Console.WriteLine("IGMPSpeedTest - by intoto systems.");
-            Console.WriteLine("Version: " + System.Windows.Forms.Application.ProductVersion);
+            Console.WriteLine("Version: " + Assembly.GetEntryAssembly().GetName().Version);
             Console.WriteLine("A very basic IGMP JOIN speed measurement tool.");
             Console.WriteLine("Usage:  Program [OPTIONS]");
             cmdLineOptions.WriteOptionDescriptions(Console.Out);
@@ -198,4 +198,3 @@ namespace IGMPSpeedTest
     
     }
 }
-

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 
-namespace IGMPSpeedTest
+namespace IgmpSpeedTest
 {
     /// <summary>
     /// IgmpSpeedTest - measures IGMP JOIN and LEAVE performance

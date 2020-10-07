@@ -1,0 +1,79 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "group":"build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [                
+                "build",
+                "${workspaceFolder}/igmpspeedtest.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "clean",
+            "group":"build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "clean"                
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish win10-x86 release",
+            "command": "cmd",
+            "type": "process",            
+            "group":"build",
+            "args": [                
+                "/c",
+                "publish-win10-x86.bat "                
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "sign win10-x86 release",
+            "command": "cmd",
+            "type": "process",
+            "group":"build",
+            "args": [
+                "/c","signcode.bat"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish linux-x64 release",
+            "command": "dotnet",
+            "type": "process",
+            "group":"build",
+            "args": [
+                "publish",
+                "${workspaceFolder}/igmpspeedtest.csproj",
+                "-r","linux-x64",
+                "-c","release",
+                "--self-contained","false",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary",
+                "/p:PublishSingleFile=true"                
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "${workspaceFolder}/igmpspeedtest.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
